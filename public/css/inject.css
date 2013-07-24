@@ -1,3 +1,8 @@
 #bbccookies {
   display: none;
 }
+
+.story-body .ldp-highlight {
+  background: yellow;
+  display: inline !important;
+}

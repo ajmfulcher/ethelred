@@ -23,6 +23,10 @@ class Tag
     attribute_safe("preferredLabel").first
   end
   
+  def same_as
+    attribute_safe("sameAs")
+  end
+  
   def short_label
     attribute_safe("shortLabel").first
   end
@@ -61,8 +65,26 @@ class Tag
   def as_object
     {
       uri: uri,
-      title: title
+      title: title,
+      name: name,
+      preferred_label: preferred_label,
+      guessed_name: guessed_name,
+      dbpedia_uri: dbpedia_uri
     }
+  end
+  
+  def dbpedia_uri
+    wiki = same_as.select { |item| item.include? "dbpedia.org" }
+    if wiki
+      wiki.first
+    end
+  end
+  
+  def guessed_name
+    wiki = same_as.select { |item| item.include? "dbpedia.org" }
+    if wiki
+      wiki.first.split("/").last.gsub("_", " ")
+    end
   end
   
   private
