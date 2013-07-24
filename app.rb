@@ -51,7 +51,6 @@ end
 get '/person' do
   content_type :json
   dbpedia_id = params[:dbpedia]
-  p dbpedia_id
   person = settings.dbpedia_client.get_person(dbpedia_id)
   JSON.pretty_generate(person) if !person.nil?
 end
@@ -60,7 +59,7 @@ get '/people/related' do
   content_type :json
   dbpedia_id = params[:dbpedia]
   related = settings.dbpedia_client.get_related_people(dbpedia_id)
-  JSON.pretty_generate(related) if !person.nil?
+  JSON.pretty_generate(related) if !related.nil?
 end
 
 get '/people/relationship' do
@@ -68,5 +67,5 @@ get '/people/relationship' do
   dbpedia_id = params[:dbpedia]
   dbpedia_id2 = params[:dbpedia2]
   relations = settings.dbpedia_client.get_relations(dbpedia_id, dbpedia_id2)
-  JSON.pretty_generate(relations) if !person.nil?
+  JSON.pretty_generate(relations) if !relations.nil?
 end

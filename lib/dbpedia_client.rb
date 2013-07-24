@@ -16,14 +16,14 @@ class DBPediaRestClient
     json = safe_get_json sparql
     if json['results']['bindings'][0]
       person = json['results']['bindings'][0]
-      person['relations'] = get_related_people(dbpedia_id)
+      person['relations'] = get_related_people(dbpedia_id, 5)
       simplify_json(person)
     else
       nil
     end
   end
 
-  def get_related_people dbpedia_id, count=5
+  def get_related_people dbpedia_id, count=20
     sparql = build_related_people_sparql(dbpedia_id, count)
     json = safe_get_json sparql
     if json['results']['bindings']
@@ -49,7 +49,7 @@ class DBPediaRestClient
 
   def build_person_sparql dbpedia_id
     "select ?name ?birthdate ?comment ?thumb where {<#{dbpedia_id}>
-    <http://dbpedia.org/property/name> ?name ;
+    <http://www.w3.org/2000/01/rdf-schema#label> ?name ;
     <http://dbpedia.org/property/birthDate> ?birthdate ;
     <http://www.w3.org/2000/01/rdf-schema#comment> ?comment
     FILTER (lang(?comment)=\"en\")
