@@ -1,6 +1,7 @@
 require 'json'
 require 'retriable'
 require 'uri'
+require 'cgi'
 require_relative 'bbc_rest_client'
 
 class DBPediaRestClient
@@ -10,12 +11,35 @@ class DBPediaRestClient
     @base_url = base_url
   end
 
-  def get_person id
-    dbpedia_id = id
+  def get_person dbpedia_id
     sparql = build_person_sparql(dbpedia_id)
     json = safe_get_json sparql
     if json['results']['bindings']
-      json['results']['bindings'][0]
+      person = json['results']['bindings'][0]
+      person['relations'] = get_related_people(dbpedia_id, 3)
+      simplify_json(person)
+    else
+      nil
+    end
+  end
+
+  def get_related_people dbpedia_id, count=10
+    sparql = build_related_people_sparql(dbpedia_id, count)
+    json = safe_get_json sparql
+    if json['results']['bindings']
+      people = json['results']['bindings']
+      simplify_json(people)
+    else
+      nil
+    end
+  end
+
+  def get_relations(dbpedia_id, dbpedia_id2)
+    sparql = build_relations_sparql(dbpedia_id, dbpedia_id2)
+    json = safe_get_json sparql
+    if json['results']['bindings']
+      relations = json['results']['bindings']
+      simplify_json(relations)
     else
       nil
     end
@@ -24,16 +48,68 @@ class DBPediaRestClient
   private
 
   def build_person_sparql dbpedia_id
-    "select ?name ?comment ?thumb where {<http://dbpedia.org/resource/#{dbpedia_id}>
+    "select ?name ?birthdate ?comment ?thumb where {<#{dbpedia_id}>
     <http://dbpedia.org/property/name> ?name ;
+    <http://dbpedia.org/property/birthDate> ?birthdate ;
     <http://www.w3.org/2000/01/rdf-schema#comment> ?comment
     FILTER (lang(?comment)=\"en\")
     FILTER (lang(?name)=\"en\") .
     OPTIONAL { <#{dbpedia_id}> <http://dbpedia.org/ontology/thumbnail> ?thumb .}} LIMIT 1"
   end
 
+  def build_related_people_sparql dbpedia_id, count
+    "PREFIX dcterms: <http://purl.org/dc/terms/>
+     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+     SELECT DISTINCT ?person ?subject WHERE {
+            <#{dbpedia_id}> dcterms:subject ?subject .
+            ?person a <http://dbpedia.org/ontology/Person> ;
+            dcterms:subject ?subject .
+         OPTIONAL {
+             ?p dcterms:subject <http://dbpedia.org/resource/Category:Living_people> .
+           FILTER (?person = ?p)
+         }
+         FILTER (!BOUND(?p))
+     }
+     ORDER BY RAND()
+     LIMIT #{count}"
+  end
+
+  def build_relations_sparql dbpedia_id, dbpedia_id2
+    "PREFIX dcterms: <http://purl.org/dc/terms/>
+     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+     SELECT DISTINCT ?relationship ?value WHERE {
+         <#{dbpedia_id}> ?relationship ?value .
+         <#{dbpedia_id2}> ?relationship ?value .
+         FILTER (?relationship != <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> && ?relationship != <http://dbpedia.org/property/wikiPageUsesTemplate> && ?relationship != <http://dbpedia.org/property/wordnet_type> )
+     }"
+  end
+
+  def simplify_json object
+    if object.kind_of?(Array)
+      simple = []
+      object.each do | item |
+        simple << simplify_json(item)
+      end
+    elsif object.kind_of?(Hash)
+      if object.has_key?('type')
+        simple = object['value']
+      else
+        simple = {}
+        object.map do | key, typedThing |
+          simple[key] = simplify_json(typedThing)
+        end
+      end
+    else
+      simple = object
+    end
+
+    simple
+  end
+
   def safe_get_json path
-    url = URI.escape("#{@base_url}#{path}")
+    url = "#{@base_url}#{CGI.escape(path)}"
     puts url
     response = @rest_client.get(url,{:accept => "application/json"})
 

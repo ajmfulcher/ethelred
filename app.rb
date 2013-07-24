@@ -48,12 +48,24 @@ get '/api/tags' do
   creative_work.first.as_object.to_json
 end
 
-get '/people/:document' do
-
-  "people endpoint #{params[:document]}"
+get '/person' do
+  content_type :json
+  dbpedia_id = params[:dbpedia]
+  person = settings.dbpedia_client.get_person(dbpedia_id)
+  JSON.pretty_generate(person)
 end
 
-get '/person/:id' do
-  person = settings.dbpedia_client.get_person(params[:id])
-  JSON.pretty_generate(person)
+get '/people/related' do
+  content_type :json
+  dbpedia_id = params[:dbpedia]
+  related = settings.dbpedia_client.get_related_people(dbpedia_id)
+  JSON.pretty_generate(related)
+end
+
+get '/people/relationship' do
+  content_type :json
+  dbpedia_id = params[:dbpedia]
+  dbpedia_id2 = params[:dbpedia2]
+  relations = settings.dbpedia_client.get_relations(dbpedia_id, dbpedia_id2)
+  JSON.pretty_generate(relations)
 end
