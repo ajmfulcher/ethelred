@@ -13,7 +13,7 @@ $(document).ready(function() {
         var span = '<span class="ldp-highlight" ' +
           'data-dbpedia-uri="' + value.dbpedia_uri + '"' +
           'data-uri="' + value.uri + '">' +
-          value.guessed_name + '</span>';
+          value.guessed_name + '</span><span class="ldp-person-icon"></span>';
         var new_html = html.replace(re, span);
         $(this).html(new_html);
       });
