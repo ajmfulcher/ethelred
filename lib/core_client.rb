@@ -17,7 +17,7 @@ class BBCRestClient
   def retriable_get url
     # TODO Eventually, don't retry
     retriable :on => Timeout::Error, :tries => 5, :interval => 1 do
-      RestClient::Resource.new(url).get(:accept => "application/json-ld")
+      RestClient::Resource.new(url).get(:accept => "application/json")
     end
   end
 end

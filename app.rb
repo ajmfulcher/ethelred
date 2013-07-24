@@ -5,6 +5,7 @@ require 'sinatra/partial'
 require 'rest-client'
 
 require_relative 'lib/core_client'
+require_relative 'lib/dbpedia_client'
 
 if ENV['PASSWORD']
   use Rack::Auth::Basic, "Restricted Area" do |username, password|
@@ -13,7 +14,7 @@ if ENV['PASSWORD']
 end
 
 configure do
-  set :client, CoreClient.new(ENV["MASHERY_KEY"])
+  set :client, DBPediaRestClient.new(ENV["MASHERY_KEY"])
   if ENV["SERVER_ENV"] == "sandbox"
     RestClient.proxy = "http://www-cache.reith.bbc.co.uk:80"
   end
@@ -24,9 +25,11 @@ get '/' do
 end
 
 get '/people/:document' do
+
   "people endpoint #{params[:document]}"
 end
 
 get '/person/:id' do
-  "person endpoint #{params[:id]}"
+  person = settings.client.get_person(params[:id])
+  JSON.pretty_generate(person)
 end
