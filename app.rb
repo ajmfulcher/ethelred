@@ -24,9 +24,9 @@ get '/' do
 end
 
 get '/people/:document' do
-  "people endpoint"
+  "people endpoint #{params[:document]}"
 end
 
-get '/person' do
-  "person endpoint"
+get '/person/:id' do
+  "person endpoint #{params[:id]}"
 end
