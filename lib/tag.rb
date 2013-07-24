@@ -58,6 +58,13 @@ class Tag
     uri == other.uri
   end
   
+  def as_object
+    {
+      uri: uri,
+      title: title
+    }
+  end
+  
   private
   
   def attribute_safe name

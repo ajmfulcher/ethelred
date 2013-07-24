@@ -8,7 +8,7 @@ class NewsClient
   end
   
   def get slug
-    response = @rest_client.get("http://www.bbc.co.uk/news/#{slug.first}")
+    response = @rest_client.get("http://www.bbc.co.uk/news/#{slug}")
     NewsPage.new response.body
   end
 end
@@ -19,6 +19,7 @@ class NewsPage
   def initialize body
     @html = Nokogiri::HTML(body)
     inject_css "/css/inject.css"
+    inject_js "/js/jquery.js"
     inject_js "/js/inject.js"
   end
   
