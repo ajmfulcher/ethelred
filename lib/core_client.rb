@@ -3,20 +3,7 @@ require 'retriable'
 
 require_relative 'creative_work'
 require_relative 'tag_concept'
-
-class BBCRestClient
-  def get url
-    retriable_get url
-  end
-  
-  private
-  
-  def retriable_get url
-    retriable :on => Timeout::Error, :tries => 5, :interval => 1 do
-      RestClient::Resource.new(url).get(:accept => "application/json-ld")
-    end
-  end
-end
+require_relative 'bbc_rest_client'
 
 class CoreClient
   def initialize api_key, rest_client = BBCRestClient.new, base_url = "http://ethelred-the-unready.ldpconnectedstudio.org.uk/ldp-core"

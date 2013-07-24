@@ -5,6 +5,8 @@ require 'sinatra/partial'
 require 'rest-client'
 
 require_relative 'lib/core_client'
+require_relative 'lib/news_client'
+require_relative 'lib/news_client'
 
 if ENV['PASSWORD']
   use Rack::Auth::Basic, "Restricted Area" do |username, password|
@@ -22,6 +24,13 @@ end
 get '/' do
   haml :index
 end
+
+get '/news/*' do
+  client = NewsClient.new 
+  page = client.get params[:splat]
+  page.html.to_s
+end
+  
 
 get '/people/:document' do
   "people endpoint #{params[:document]}"
