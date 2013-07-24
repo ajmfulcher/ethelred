@@ -6,6 +6,7 @@ require 'rest-client'
 require 'cgi'
 
 require_relative 'lib/core_client'
+require_relative 'lib/dbpedia_client'
 require_relative 'lib/news_client'
 require_relative 'lib/bbc_rest_client'
 
@@ -16,6 +17,7 @@ if ENV['PASSWORD']
 end
 
 configure do
+  set :dbpedia_client, DBPediaRestClient.new
   set :news_client, NewsClient.new
   set :client, BBCRestClient.new
   set :core_client, CoreClient.new(ENV["MASHERY_KEY"])
@@ -47,9 +49,11 @@ get '/api/tags' do
 end
 
 get '/people/:document' do
+
   "people endpoint #{params[:document]}"
 end
 
 get '/person/:id' do
-  "person endpoint #{params[:id]}"
+  person = settings.dbpedia_client.get_person(params[:id])
+  JSON.pretty_generate(person)
 end
