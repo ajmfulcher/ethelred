@@ -14,16 +14,16 @@ class DBPediaRestClient
   def get_person dbpedia_id
     sparql = build_person_sparql(dbpedia_id)
     json = safe_get_json sparql
-    if json['results']['bindings']
+    if json['results']['bindings'][0]
       person = json['results']['bindings'][0]
-      person['relations'] = get_related_people(dbpedia_id, 3)
+      person['relations'] = get_related_people(dbpedia_id)
       simplify_json(person)
     else
       nil
     end
   end
 
-  def get_related_people dbpedia_id, count=10
+  def get_related_people dbpedia_id, count=5
     sparql = build_related_people_sparql(dbpedia_id, count)
     json = safe_get_json sparql
     if json['results']['bindings']
@@ -65,11 +65,7 @@ class DBPediaRestClient
             <#{dbpedia_id}> dcterms:subject ?subject .
             ?person a <http://dbpedia.org/ontology/Person> ;
             dcterms:subject ?subject .
-         OPTIONAL {
-             ?p dcterms:subject <http://dbpedia.org/resource/Category:Living_people> .
-           FILTER (?person = ?p)
-         }
-         FILTER (!BOUND(?p))
+            FILTER ( ?subject != <http://dbpedia.org/resource/Category:Living_people> )
      }
      ORDER BY RAND()
      LIMIT #{count}"
@@ -82,7 +78,9 @@ class DBPediaRestClient
      SELECT DISTINCT ?relationship ?value WHERE {
          <#{dbpedia_id}> ?relationship ?value .
          <#{dbpedia_id2}> ?relationship ?value .
-         FILTER (?relationship != <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> && ?relationship != <http://dbpedia.org/property/wikiPageUsesTemplate> && ?relationship != <http://dbpedia.org/property/wordnet_type> )
+         FILTER (?relationship != <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
+              && ?relationship != <http://dbpedia.org/property/wikiPageUsesTemplate>
+              && ?relationship != <http://dbpedia.org/property/wordnet_type> )
      }"
   end
 
