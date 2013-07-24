@@ -24,6 +24,21 @@ class CreativeWork
     @json['description']
   end
   
+  def as_object
+    about_tags = if about
+      about.map { |tag| tag.as_object }
+    end
+    mentions_tags = if mentions
+      mentions.map { |tag| tag.as_object }
+    end
+    {
+      title: title,
+      uri: uri,
+      tags: about_tags,
+      mentions: mentions_tags
+    }
+  end
+  
   def url
     poten = JSONHelper.normalize_array(@json['primaryContentOf'])
     non_mobile_urls = poten.select { |u| u.include?("mobile") == false }

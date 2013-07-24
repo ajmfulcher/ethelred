@@ -1,7 +1,7 @@
 require 'json'
 require 'retriable'
 require 'uri'
-require_relative 'core_client'
+require_relative 'bbc_rest_client'
 
 class DBPediaRestClient
 
@@ -35,7 +35,7 @@ class DBPediaRestClient
   def safe_get_json path
     url = URI.escape("#{@base_url}#{path}")
     puts url
-    response = @rest_client.get url
+    response = @rest_client.get(url,{:accept => "application/json"})
 
     if response.code != 200
       raise CoreClientError.new "HTTP response for #{url} was #{response.code}"
