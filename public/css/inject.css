@@ -5,4 +5,13 @@
 .story-body .ldp-highlight {
   background: yellow;
   display: inline !important;
+  position: relative;
+}
+
+.story-body .ldp-person-icon {
+  display: inline-block;
+  margin: 0 0 -3px 5px;
+  width: 16px;
+  height: 16px;
+  background: #aaa;
 }
