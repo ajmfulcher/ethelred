@@ -5,16 +5,19 @@
     %div.description= @person["description"]
 %div.separator
 %div.ldp-creative-works
+  %h5 Elsewhere
   %ul
     - @creative_works[0..4].each do |cw|
       %li
-        %a{"href" => cw.url.gsub("http://www.bbc.co.uk/news", "/news")}
+        %a{"href" => cw.url.gsub("http://www.bbc.co.uk/news", "/news").gsub("http://www.bbc.co.uk/sport", "/sport")}
           %div.cw-title= cw.title
 %div.separator
 %div.ldp-relations
+  %h5 Related People
   %ul
     - @person["relations"].each do |relation|
       %li
-        %div= relation["name"]
-        %div= relation["subject"]
+        %span
+          %a{"href" => "#"}=relation["name"]
+        %span.relation-type= relation["subject"]
 %div.clearfix
