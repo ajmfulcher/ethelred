@@ -1,2 +1,20 @@
-- @creative_works.each do |cw|
-  %div= cw.title
+%div.ldp-person
+  %div.image{"style" => "background-image: url('#{@person["thumb"]}')"}
+  %div.text
+    %div.name= @person["name"]
+    %div.description= @person["comment"]
+%hr
+%div.ldp-creative-works
+  %ul
+    - @creative_works[0..4].each do |cw|
+      %li
+        %a{"href" => cw.url.gsub("http://www.bbc.co.uk/news", "/news")}
+          %div.cw-title= cw.title
+%hr
+%div.ldp-relations
+  %ul
+    - @person["relations"].each do |relation|
+      %li
+        %div= relation["name"]
+        %div= relation["subject"]
+%div.clearfix

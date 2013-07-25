@@ -61,11 +61,13 @@ get '/partial/popup/loading' do
 end
 
 get '/partial/popup/detail' do
-  @uri = params[:uri]
+  uri = CGI::escape(params[:uri])
+  dbpedia_uri = params[:dbpedia]
   query_params = {
-    "tag" => CGI::escape(params[:uri])
+    "tag" => uri
   }
   @creative_works = settings.core_client.creative_works(query_params)
+  @person = settings.dbpedia_client.get_person(dbpedia_uri)
   haml :popup_detail
 end
 

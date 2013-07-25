@@ -23,7 +23,7 @@
   z-index: 10000;
   top: 10px;
   left: 10px;
-  width: 200px;
+  width: 300px;
   height: 100px;
   box-sizing: border-box;
 }
@@ -32,7 +32,7 @@
   word-wrap: break-word;
   margin-top: -10px;
   background: #fff;
-  padding: 10px;
+  padding: 15px;
   border: 1px solid #ddd;
   font-size: 12px;
 }
@@ -44,7 +44,7 @@
   left: 50%;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  margin-left: -10px;
+  margin-left: -100px;
 }
 
 .arrow-up {
@@ -55,4 +55,54 @@
   bottom: 0px;
   top: -9px;
   border-bottom: 10px solid #fff;
+}
+
+.ldp-person .image {
+  float: left;
+  width: 104px;
+  height: 104px;
+  background: #ddd;
+  margin-right: 15px;
+  background-size: 100%;
+}
+
+.ldp-person .text {
+  float: left;
+  width: 149px;
+}
+
+.ldp-person .name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #1F4F82;
+  margin-bottom: 2px;
+}
+
+.ldp-creative-works {
+  float: left;
+  clear: left;
+}
+
+.ldp-creative-works ul, .ldp-creative-works li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ldp-creative-works ul {
+  margin-top: 0px;
+  margin-bottom: -5px;
+}
+
+.ldp-creative-works ul li {
+  margin-bottom: 4px;
+}
+
+.ldp-creative-works ul li a .cw-title {
+  color: #1F4F82 !important;
+  font-size: 13px;
+}
+
+.clearfix {
+  clear: both;
 }
