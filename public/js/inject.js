@@ -9,20 +9,34 @@ function populate_tags(callback) {
   url = "http://www.bbc.co.uk" + path
   encoded_url = encodeURIComponent(url)
   $.getJSON("/api/tags?url=" + encoded_url, function(data) {
-    $.each(data.mentions, function(index, value) {
-      $(".story-body > p").each(function(index) {
-        replace_name_with_tag(this, value, callback);
+    console.log(data);
+    if(data.about) {
+      $.each(data.about, function(index, value) {
+        console.log("About: " + value.guessed_name);
+        $(".story-body > p").each(function(index) {
+          replace_name_with_tag(this, value, callback);
+        });
+        $(".article > p").each(function(index) {
+          replace_name_with_tag(this, value, callback);
+        });
       });
-      $(".article > p").each(function(index) {
-        replace_name_with_tag(this, value, callback);
+    }
+    if(data.mentions) {
+      $.each(data.mentions, function(index, value) {
+        console.log("Mentions: " + value.guessed_name);
+        $(".story-body > p").each(function(index) {
+          replace_name_with_tag(this, value, callback);
+        });
+        $(".article > p").each(function(index) {
+          replace_name_with_tag(this, value, callback);
+        });
       });
-    });
+    }
     callback();
   });
 }
 
 function replace_name_with_tag(element, tag) {
-  console.log("Replace '" + tag.guessed_name + "'");
   var re = new RegExp(tag.guessed_name, 'g');
   var html = $(element).html();
   var span = '</a><span class="ldp-tag"><span class="ldp-highlight">' +
@@ -54,7 +68,7 @@ function add_click_listener() {
         $(this).css("left", position.left + 244);
       } else {
         /* Non-sport page */
-        $(this).css("top", position.top + 153);
+        $(this).css("top", position.top + 178);
         $(this).css("left", position.left + 100);
       }
       $(this).hide().appendTo("body").fadeIn(200, function() {

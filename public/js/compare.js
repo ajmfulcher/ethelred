@@ -39,7 +39,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var content = personWrapper + didYouKnow + otherPeople;
 
     var story = document.querySelector('.story-related');
-    story.insertAdjacentHTML('beforebegin', content);
+    if(document.URL.indexOf("/news/") !== -1) {
+      story.insertAdjacentHTML('beforebegin', content);
+    }
 
 
 
