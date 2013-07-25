@@ -52,6 +52,7 @@ get '/sport/*' do
 end
 
 get '/api/tags' do
+  content_type :json
   query_params = {
     "webDocument" => CGI::escape(params[:url])
   }
@@ -111,4 +112,15 @@ get '/people/with' do
   val = params[:val]
   people = settings.dbpedia_client.get_people_with_property(rel, val)
   JSON.pretty_generate(people) if !people.nil?
+end
+
+get '/people/label' do
+  dbpedia_id = params[:dbpedia]
+  settings.dbpedia_client.get_label(dbpedia_id)
+end
+
+get '/partial/did_you_know' do
+  dbpedia_uris = params[:dbpedia_uris].split(',')
+  @interesting_fact =  settings.dbpedia_client.get_fact(dbpedia_uris)
+  haml :did_you_know
 end

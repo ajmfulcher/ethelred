@@ -9,6 +9,14 @@ class DBPediaRestClient
   def initialize rest_client = BBCRestClient.new, base_url = "http://dbpedia.org/sparql?default-graph-uri=http://dbpedia.org&format=application/json&timeout=30000&query="
     @rest_client = rest_client
     @base_url = base_url
+    @labels = {}
+  end
+
+  def get_label(uri)
+    if @labels[uri].nil?
+      @labels[uri] = request_label(uri)
+    end
+    @labels[uri]
   end
 
   def get_person dbpedia_id
@@ -19,6 +27,7 @@ class DBPediaRestClient
       person['relations'] = get_related_people(dbpedia_id, 5)
       person = simplify_json(person)
       person['description'] = person['description'].split('.').first + '.'
+      @labels[dbpedia_id] = person['name']
       person
     else
       nil
@@ -37,6 +46,7 @@ class DBPediaRestClient
   end
 
   def get_relations(dbpedia_id, dbpedia_id2)
+    puts dbpedia_id + ", " + dbpedia_id2
     sparql = build_relations_sparql(dbpedia_id, dbpedia_id2)
     json = safe_get_json sparql
     if json['results']['bindings']
@@ -58,7 +68,54 @@ class DBPediaRestClient
     end
   end
 
+  def get_fact(ids)
+    ids.each_with_index do |first, index|
+      ids[index+1..-1].each do |second|
+        relations = get_relations(first, second)
+        if !relations.empty?
+          return generate_fact(first, second, relations)
+        end
+      end
+    end
+    "There is nothing relating any of these people! Wow, so much for Kevin Bacon."
+  end
+
   private
+
+  def request_label dbpedia_id
+    sparql = build_label_sparql(dbpedia_id)
+    json = safe_get_json sparql
+    if json['results']['bindings'][0]
+      person = json['results']['bindings'][0]
+      person = simplify_json(person)
+      person['name']
+    else
+      nil
+    end
+  end
+
+  def generate_fact(first, second, relations)
+    relation = relations.sample
+
+    firstPerson = get_label(first)
+    secondPerson = get_label(second)
+    s = "#{firstPerson} and #{secondPerson} both had #{relation['value']} as their #{relation['relationship']}."
+
+    others = get_people_with_property(relation['r'], relation['v'])
+    if !others.empty?
+      thirdPerson = get_label(others[0]['person'])
+      s+= " As did #{thirdPerson}."
+    end
+
+    s
+  end
+
+  def build_label_sparql dbpedia_id
+    "select ?name where {
+    <#{dbpedia_id}> <http://www.w3.org/2000/01/rdf-schema#label> ?name .
+    FILTER (lang(?name)=\"en\") .
+    }"
+  end
 
   def build_person_sparql dbpedia_id
     "select ?name ?birthdate ?description ?thumb where {
@@ -72,10 +129,10 @@ class DBPediaRestClient
 
 
   def build_people_with_property_sparql property, value
-      "select ?name ?thumb where {
+      "select ?name ?thumb ?person where {
     ?person <#{property}> <#{value}> ;
-    <http://www.w3.org/2000/01/rdf-schema#label> ?name ;
-    FILTER (lang(?name)=\"en\") .
+    <http://www.w3.org/2000/01/rdf-schema#label> ?name .
+    FILTER (lang(?name)=\"en\")
     OPTIONAL { ?person <http://dbpedia.org/ontology/thumbnail> ?thumb .}} LIMIT 1"
   end
 
@@ -101,14 +158,17 @@ class DBPediaRestClient
   def build_relations_sparql dbpedia_id, dbpedia_id2
     "PREFIX dcterms: <http://purl.org/dc/terms/>
      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-
-     SELECT DISTINCT ?relationship ?value WHERE {
-         <#{dbpedia_id}> ?relationship ?value .
-         <#{dbpedia_id2}> ?relationship ?value .
-         FILTER (?relationship != <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
-              && ?relationship != <http://dbpedia.org/property/wikiPageUsesTemplate>
-              && ?relationship != <http://dbpedia.org/property/wordnet_type> )
-     }"
+     SELECT DISTINCT ?relationship ?value ?r ?v WHERE {
+         <#{dbpedia_id}> ?r ?v .
+         <#{dbpedia_id2}> ?r ?v .
+         FILTER (?r != <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
+&& ?r != <http://dbpedia.org/property/wikiPageUsesTemplate>
+&& ?r != <http://dbpedia.org/property/wordnet_type> )
+         ?r <http://www.w3.org/2000/01/rdf-schema#label> ?relationship .
+         ?v <http://www.w3.org/2000/01/rdf-schema#label> ?value .
+            FILTER (lang(?relationship)=\"en\")
+            FILTER (lang(?value)=\"en\")
+}"
   end
 
   def simplify_json object
@@ -134,7 +194,8 @@ class DBPediaRestClient
   end
 
   def safe_get_json path
-    url = URI.escape("#{@base_url}#{path}")
+    url = "#{@base_url}#{CGI.escape(path)}"
+    p url
     response = @rest_client.get(url,{:accept => "application/json"})
 
     if response.code != 200
