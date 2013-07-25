@@ -12,9 +12,12 @@
           %div.cw-title= cw.title
 %div.separator
 %div.ldp-relations
+  %p
+    %b Related People
   %ul
     - @person["relations"].each do |relation|
       %li
-        %div= relation["name"]
-        %div= relation["subject"]
+        %div
+          %span= relation["name"]
+          %span.relation-type= relation["subject"]
 %div.clearfix

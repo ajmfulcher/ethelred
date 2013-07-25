@@ -18,6 +18,13 @@
   cursor: pointer;
 }
 
+.ldp-popover .loading {
+  background: url("/img/loading.gif");
+  width: 32px;
+  height: 32px;
+  margin: 30px auto;
+}
+
 .ldp-popover-container {
   position: absolute;
   z-index: 10000;
@@ -108,11 +115,18 @@
   clear: left;
 }
 
+.ldp-relations .relation-type {
+  font-size: 10px;
+  line-height: 10px;
+  text-transform: uppercase;
+  color: #666;
+}
+
 .ldp-popover .separator {
   color: #ddd;
   background-color: #ddd;
   height: 1px;
-  margin: 10px 0 10px 0 !important;
+  margin: 13px 0 13px 0 !important;
   float: left;
   clear: left;
   width: 268px;
