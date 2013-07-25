@@ -47,8 +47,16 @@ function add_click_listener() {
     var position = $(this).position();
     $("<div></div>").load("/partial/popup/loading?uri=" + uri, function() {
       $(this).attr("class", "ldp-popover-container");
-      $(this).css("top", position.top + 153);
-      $(this).css("left", position.left + 103);
+      console.log(document.URL.indexOf("/sport/"));
+      if(document.URL.indexOf("/sport/") !== -1) {
+        /* Sport page */
+        $(this).css("top", position.top + 496);
+        $(this).css("left", position.left + 244);
+      } else {
+        /* Non-sport page */
+        $(this).css("top", position.top + 153);
+        $(this).css("left", position.left + 100);
+      }
       $(this).hide().appendTo("body").fadeIn(200, function() {
         $(".ldp-popup-content").load("/partial/popup/detail?uri=" + uri + "&dbpedia=" + dbpedia_uri);
       });

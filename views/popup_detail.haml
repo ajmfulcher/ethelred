@@ -9,7 +9,7 @@
   %ul
     - @creative_works[0..4].each do |cw|
       %li
-        %a{"href" => cw.url.gsub("http://www.bbc.co.uk/news", "/news")}
+        %a{"href" => cw.url.gsub("http://www.bbc.co.uk/news", "/news").gsub("http://www.bbc.co.uk/sport", "/sport")}
           %div.cw-title= cw.title
 %div.separator
 %div.ldp-relations
