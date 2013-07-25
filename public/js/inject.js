@@ -28,15 +28,29 @@ function extract_ids(callback) {
 }
 
 function populate_tags(callback) {
-    $.each(document.data.mentions, function(index, value) {
-      $(".story-body > p").each(function(index) {
-        replace_name_with_tag(this, value, callback);
+    if(document.data.about) {
+      $.each(document.data.about, function(index, value) {
+        console.log("About: " + value.guessed_name);
+        $(".story-body > p").each(function(index) {
+          replace_name_with_tag(this, value, callback);
+        });
+        $(".article > p").each(function(index) {
+          replace_name_with_tag(this, value, callback);
+        });
       });
-      $(".article > p").each(function(index) {
-        replace_name_with_tag(this, value, callback);
+    }
+    if(document.data.mentions) {
+      $.each(document.data.mentions, function(index, value) {
+        console.log("Mentions: " + value.guessed_name);
+        $(".story-body > p").each(function(index) {
+          replace_name_with_tag(this, value, callback);
+        });
+        $(".article > p").each(function(index) {
+          replace_name_with_tag(this, value, callback);
+        });
       });
-    });
-    callback();
+    }
+  callback();
 }
 
 function replace_name_with_tag(element, tag) {

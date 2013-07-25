@@ -36,7 +36,7 @@ class CreativeWork
     {
       title: title,
       uri: uri,
-      tags: about_tags,
+      about: about_tags,
       mentions: mentions_tags
     }
   end

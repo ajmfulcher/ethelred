@@ -75,6 +75,7 @@
   background: #ddd;
   margin-right: 15px;
   background-size: 100%;
+  background-repeat: no-repeat;
 }
 
 .ldp-person .text {
