@@ -55,6 +55,24 @@ get '/person' do
   JSON.pretty_generate(person) if !person.nil?
 end
 
+get '/partial/popup/loading' do
+  @uri = params[:uri]
+  haml :popup_loading
+end
+
+get '/partial/popup/detail' do
+  @uri = params[:uri]
+  query_params = {
+    "tag" => CGI::escape(params[:uri])
+  }
+  @creative_works = settings.core_client.creative_works(query_params)
+  haml :popup_detail
+end
+
+get '/people/:document' do
+  "people endpoint #{params[:document]}"
+end
+
 get '/people/related' do
   content_type :json
   dbpedia_id = params[:dbpedia]

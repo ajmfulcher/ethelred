@@ -3,15 +3,56 @@
 }
 
 .story-body .ldp-highlight {
-  background: yellow;
   display: inline !important;
   position: relative;
+  color: #1F4F82;
+  font-weight: bold;
 }
 
 .story-body .ldp-person-icon {
   display: inline-block;
-  margin: 0 0 -3px 5px;
+  margin: 0 0 -3px 4px;
   width: 16px;
   height: 16px;
-  background: #aaa;
+  background: url("/img/person-icon.png");
+  cursor: pointer;
+}
+
+.ldp-popover-container {
+  position: absolute;
+  z-index: 10000;
+  top: 10px;
+  left: 10px;
+  width: 200px;
+  height: 100px;
+  box-sizing: border-box;
+}
+
+.ldp-popup-content {
+  word-wrap: break-word;
+  margin-top: -10px;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #ddd;
+  font-size: 12px;
+}
+
+.arrow {
+  width: 0; 
+  height: 0;
+  position: relative;
+  left: 50%;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  margin-left: -10px;
+}
+
+.arrow-up {
+  border-bottom: 10px solid #ccc;
+}
+
+.arrow-up-2 {
+  bottom: 0px;
+  top: -9px;
+  border-bottom: 10px solid #fff;
 }
