@@ -9,5 +9,6 @@ gem "rest-client"
 gem "json"
 gem "sinatra-partial"
 gem "retriable"
+gem "nokogiri"
 
 gem "rspec",  :group => :test
