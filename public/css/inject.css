@@ -103,6 +103,21 @@
   font-size: 13px;
 }
 
+.ldp-relations {
+  float: left;
+  clear: left;
+}
+
+.ldp-popover .separator {
+  color: #ddd;
+  background-color: #ddd;
+  height: 1px;
+  margin: 10px 0 10px 0 !important;
+  float: left;
+  clear: left;
+  width: 268px;
+}
+
 .clearfix {
   clear: both;
 }
