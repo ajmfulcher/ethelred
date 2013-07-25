@@ -45,7 +45,7 @@ function add_click_listener() {
       $(this).css("top", position.top + 153);
       $(this).css("left", position.left + 63);
       $(this).hide().appendTo("body").fadeIn(200, function() {
-        
+        $(".ldp-popup-content").load("/partial/popup/detail?uri=" + uri);
       });
     });
   });
