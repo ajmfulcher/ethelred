@@ -63,6 +63,7 @@
   height: 104px;
   background: #ddd;
   margin-right: 15px;
+  background-size: 100%;
 }
 
 .ldp-person .text {
@@ -80,9 +81,6 @@
 .ldp-creative-works {
   float: left;
   clear: left;
-  border-top: 1px solid #ddd;
-  padding-top: 15px;
-  margin-top: 15px;
 }
 
 .ldp-creative-works ul, .ldp-creative-works li {

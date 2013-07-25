@@ -39,13 +39,14 @@ function add_click_listener() {
   $(".ldp-person-icon").click(function() {
     hide_other_popovers();
     var uri = encodeURIComponent($(this).attr("data-uri"));
+    var dbpedia_uri = encodeURIComponent($(this).attr("data-dbpedia-uri"));
     var position = $(this).position();
     $("<div></div>").load("/partial/popup/loading?uri=" + uri, function() {
       $(this).attr("class", "ldp-popover-container");
       $(this).css("top", position.top + 153);
       $(this).css("left", position.left + 103);
       $(this).hide().appendTo("body").fadeIn(200, function() {
-        $(".ldp-popup-content").load("/partial/popup/detail?uri=" + uri);
+        $(".ldp-popup-content").load("/partial/popup/detail?uri=" + uri + "&dbpedia=" + dbpedia_uri);
       });
     });
   });
