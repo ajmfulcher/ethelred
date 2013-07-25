@@ -19,6 +19,7 @@ end
 configure do
   set :dbpedia_client, DBPediaRestClient.new
   set :news_client, NewsClient.new
+  set :sport_client, SportClient.new
   set :client, BBCRestClient.new
   set :core_client, CoreClient.new(ENV["MASHERY_KEY"])
   if ENV["SERVER_ENV"] == "sandbox"
@@ -40,14 +41,24 @@ get '/news/*' do
   page.html.to_s
 end
 
+get '/sport' do
+  page = settings.sport_client.get "/"
+  page.html.to_s
+end
 
+get '/sport/*' do
+  page = settings.sport_client.get params[:splat].first
+  page.html.to_s
+end
 
 get '/api/tags' do
   query_params = {
     "webDocument" => CGI::escape(params[:url])
   }
   creative_work = settings.core_client.creative_works(query_params)
-  creative_work.first.as_object.to_json
+  if creative_work
+    creative_work.first.as_object.to_json
+  end
 end
 
 get '/person' do

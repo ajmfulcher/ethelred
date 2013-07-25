@@ -13,15 +13,19 @@ function populate_tags(callback) {
       $(".story-body > p").each(function(index) {
         replace_name_with_tag(this, value, callback);
       });
+      $(".article > p").each(function(index) {
+        replace_name_with_tag(this, value, callback);
+      });
     });
     callback();
   });
 }
 
 function replace_name_with_tag(element, tag) {
+  console.log("Replace '" + tag.guessed_name + "'");
   var re = new RegExp(tag.guessed_name, 'g');
   var html = $(element).html();
-  var span = '<span class="ldp-tag"><span class="ldp-highlight">' +
+  var span = '</a><span class="ldp-tag"><span class="ldp-highlight">' +
     tag.guessed_name + '</span><span data-uri="' + tag.uri + '" data-dbpedia-uri="' + tag.dbpedia_uri + '" class="ldp-person-icon"></span></span>';
   var new_html = html.replace(re, span);
   $(element).html(new_html);

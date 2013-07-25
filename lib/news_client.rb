@@ -13,6 +13,17 @@ class NewsClient
   end
 end
 
+class SportClient
+  def initialize rest_client = BBCRestClient.new
+    @rest_client = rest_client
+  end
+  
+  def get slug
+    response = @rest_client.get("http://www.bbc.co.uk/sport/#{slug}")
+    NewsPage.new response.body
+  end
+end
+
 class NewsPage
   attr_accessor :html
   
