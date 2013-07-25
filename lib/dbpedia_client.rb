@@ -45,6 +45,13 @@ class DBPediaRestClient
     end
   end
 
+  #def get_people_with_property(property)
+  #  sparql = build_relations_sparql(dbpedia_id, dbpedia_id2)
+  #  json = safe_get_json sparql
+  #  if json['results']['bindings']
+  #    people = json[]
+  #end
+
   private
 
   def build_person_sparql dbpedia_id
@@ -61,11 +68,16 @@ class DBPediaRestClient
     "PREFIX dcterms: <http://purl.org/dc/terms/>
      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-     SELECT DISTINCT ?person ?subject WHERE {
-            <#{dbpedia_id}> dcterms:subject ?subject .
-            ?person a <http://dbpedia.org/ontology/Person> ;
-            dcterms:subject ?subject .
-            FILTER ( ?subject != <http://dbpedia.org/resource/Category:Living_people> )
+     SELECT DISTINCT ?name ?subject ?thumb ?person_ref ?subject_ref WHERE {
+            <#{dbpedia_id}> dcterms:subject ?subject_ref .
+            ?person_ref a <http://dbpedia.org/ontology/Person> .
+            ?person_ref <http://www.w3.org/2000/01/rdf-schema#label> ?name ;
+            dcterms:subject ?subject_ref .
+            ?subject_ref <http://www.w3.org/2000/01/rdf-schema#label> ?subject .
+            FILTER ( ?subject_ref != <http://dbpedia.org/resource/Category:Living_people> )
+            FILTER (lang(?name)=\"en\")
+            FILTER (lang(?subject)=\"en\")
+            OPTIONAL { ?person_ref <http://dbpedia.org/ontology/thumbnail> ?thumb .}
      }
      ORDER BY RAND()
      LIMIT #{count}"
