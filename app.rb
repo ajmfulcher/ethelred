@@ -119,8 +119,10 @@ get '/api/people/label' do
 end
 
 get '/api/did_you_know' do
+  content_type :json
   dbpedia_uris = params[:dbpedia_uris].split(',')
-  settings.dbpedia_client.get_fact(dbpedia_uris)
+  fact = settings.dbpedia_client.get_fact(dbpedia_uris)
+  "{\"content\": \"#{fact}\"}"
 end
 
 get '/api/person' do

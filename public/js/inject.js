@@ -1,15 +1,34 @@
 $(document).ready(function() {
-  populate_tags(function() {
-    add_click_listener();
+  extract_ids(function(){
+
+      populate_tags(function() {
+          add_click_listener();
+      });
+
+      create_static_content();
   });
 });
 
+function extract_ids(callback) {
+    path = window.location.pathname;
+    url = "http://www.bbc.co.uk" + path;
+    encoded_url = encodeURIComponent(url);
+    document.ldp_ids = [];
+    document.dbpedia_ids = [];
+    $.getJSON("/api/tags?url=" + encoded_url, function(data) {
+        $.each(data.mentions, function(index, value) {
+            document.ldp_ids.push(value.uri);
+            document.dbpedia_ids.push(value.dbpedia_uri);
+        });
+        console.log(document.ldp_ids);
+        console.log(document.dbpedia_ids);
+        document.data = data;
+        callback();
+    });
+}
+
 function populate_tags(callback) {
-  path = window.location.pathname;
-  url = "http://www.bbc.co.uk" + path
-  encoded_url = encodeURIComponent(url)
-  $.getJSON("/api/tags?url=" + encoded_url, function(data) {
-    $.each(data.mentions, function(index, value) {
+    $.each(document.data.mentions, function(index, value) {
       $(".story-body > p").each(function(index) {
         replace_name_with_tag(this, value, callback);
       });
@@ -18,7 +37,6 @@ function populate_tags(callback) {
       });
     });
     callback();
-  });
 }
 
 function replace_name_with_tag(element, tag) {
