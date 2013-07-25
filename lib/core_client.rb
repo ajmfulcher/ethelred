@@ -60,7 +60,6 @@ class CoreClient
   
   def safe_get_json path
     url = "#{@base_url}/#{path}"
-    puts url
     response = @rest_client.get url
     
     if response.code != 200

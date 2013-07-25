@@ -107,8 +107,7 @@ class DBPediaRestClient
   end
 
   def safe_get_json path
-    url = "#{@base_url}#{CGI.escape(path)}"
-    puts url
+    url = URI.escape("#{@base_url}#{path}")
     response = @rest_client.get(url,{:accept => "application/json"})
 
     if response.code != 200
