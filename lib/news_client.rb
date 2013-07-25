@@ -21,6 +21,7 @@ class NewsPage
     inject_css "/css/inject.css"
     inject_js "/js/jquery.js"
     inject_js "/js/inject.js"
+    inject_js "/js/compare.js"
   end
   
   private
