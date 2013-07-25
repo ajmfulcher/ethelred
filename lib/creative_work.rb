@@ -4,6 +4,8 @@ require_relative 'tag'
 require_relative 'json_helper'
 
 class CreativeWork
+  attr_accessor :json
+  
   def initialize json
     @json = json
   end
