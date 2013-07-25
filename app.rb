@@ -62,13 +62,6 @@ get '/api/tags' do
   end
 end
 
-get '/person' do
-  content_type :json
-  dbpedia_id = params[:dbpedia]
-  person = settings.dbpedia_client.get_person(dbpedia_id)
-  JSON.pretty_generate(person) if !person.nil?
-end
-
 get '/partial/popup/loading' do
   @uri = params[:uri]
   haml :popup_loading
@@ -91,14 +84,20 @@ get '/partial/popup/detail' do
   haml :popup_detail
 end
 
-get '/people/related' do
+get '/partial/did_you_know' do
+  dbpedia_uris = params[:dbpedia_uris].split(',')
+  @interesting_fact =  settings.dbpedia_client.get_fact(dbpedia_uris)
+  haml :did_you_know
+end
+
+get '/api/people/related' do
   content_type :json
   dbpedia_id = params[:dbpedia]
   related = settings.dbpedia_client.get_related_people(dbpedia_id)
   JSON.pretty_generate(related) if !related.nil?
 end
 
-get '/people/relationship' do
+get '/api/people/relationship' do
   content_type :json
   dbpedia_id = params[:dbpedia]
   dbpedia_id2 = params[:dbpedia2]
@@ -106,7 +105,7 @@ get '/people/relationship' do
   JSON.pretty_generate(relations) if !relations.nil?
 end
 
-get '/people/with' do
+get '/api/people/with' do
   content_type :json
   rel = params[:rel]
   val = params[:val]
@@ -114,13 +113,19 @@ get '/people/with' do
   JSON.pretty_generate(people) if !people.nil?
 end
 
-get '/people/label' do
+get '/api/people/label' do
   dbpedia_id = params[:dbpedia]
   settings.dbpedia_client.get_label(dbpedia_id)
 end
 
-get '/partial/did_you_know' do
+get '/api/did_you_know' do
   dbpedia_uris = params[:dbpedia_uris].split(',')
-  @interesting_fact =  settings.dbpedia_client.get_fact(dbpedia_uris)
-  haml :did_you_know
+  settings.dbpedia_client.get_fact(dbpedia_uris)
+end
+
+get '/api/person' do
+  content_type :json
+  dbpedia_id = params[:dbpedia]
+  person = settings.dbpedia_client.get_person(dbpedia_id)
+  JSON.pretty_generate(person) if !person.nil?
 end
