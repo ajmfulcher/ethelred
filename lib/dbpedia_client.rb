@@ -96,9 +96,18 @@ class DBPediaRestClient
 
   def generate_fact(first, second, relations)
     relation = relations.sample
+
     firstPerson = get_label(first)
     secondPerson = get_label(second)
-    "#{firstPerson} and #{secondPerson} both had #{relation['value']} as their #{relation['relationship']}."
+    s = "#{firstPerson} and #{secondPerson} both had #{relation['value']} as their #{relation['relationship']}."
+
+    others = get_people_with_property(relation['r'], relation['v'])
+    if !others.empty?
+      thirdPerson = get_label(others[0]['person'])
+      s+= " As did #{thirdPerson}."
+    end
+
+    s
   end
 
   def build_label_sparql dbpedia_id
@@ -120,10 +129,10 @@ class DBPediaRestClient
 
 
   def build_people_with_property_sparql property, value
-      "select ?name ?thumb where {
+      "select ?name ?thumb ?person where {
     ?person <#{property}> <#{value}> ;
-    <http://www.w3.org/2000/01/rdf-schema#label> ?name ;
-    FILTER (lang(?name)=\"en\") .
+    <http://www.w3.org/2000/01/rdf-schema#label> ?name .
+    FILTER (lang(?name)=\"en\")
     OPTIONAL { ?person <http://dbpedia.org/ontology/thumbnail> ?thumb .}} LIMIT 1"
   end
 
@@ -149,7 +158,7 @@ class DBPediaRestClient
   def build_relations_sparql dbpedia_id, dbpedia_id2
     "PREFIX dcterms: <http://purl.org/dc/terms/>
      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-     SELECT DISTINCT ?relationship ?value WHERE {
+     SELECT DISTINCT ?relationship ?value ?r ?v WHERE {
          <#{dbpedia_id}> ?r ?v .
          <#{dbpedia_id2}> ?r ?v .
          FILTER (?r != <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
