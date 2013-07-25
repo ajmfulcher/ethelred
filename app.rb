@@ -69,10 +69,6 @@ get '/partial/popup/detail' do
   haml :popup_detail
 end
 
-get '/people/:document' do
-  "people endpoint #{params[:document]}"
-end
-
 get '/people/related' do
   content_type :json
   dbpedia_id = params[:dbpedia]
@@ -86,4 +82,12 @@ get '/people/relationship' do
   dbpedia_id2 = params[:dbpedia2]
   relations = settings.dbpedia_client.get_relations(dbpedia_id, dbpedia_id2)
   JSON.pretty_generate(relations) if !relations.nil?
+end
+
+get '/people/with' do
+  content_type :json
+  rel = params[:rel]
+  val = params[:val]
+  people = settings.dbpedia_client.get_people_with_property(rel, val)
+  JSON.pretty_generate(people) if !people.nil?
 end

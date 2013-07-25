@@ -17,7 +17,9 @@ class DBPediaRestClient
     if json['results']['bindings'][0]
       person = json['results']['bindings'][0]
       person['relations'] = get_related_people(dbpedia_id, 5)
-      simplify_json(person)
+      person = simplify_json(person)
+      person['description'] = person['description'].split('.').first + '.'
+      person
     else
       nil
     end
@@ -45,23 +47,36 @@ class DBPediaRestClient
     end
   end
 
-  #def get_people_with_property(property)
-  #  sparql = build_relations_sparql(dbpedia_id, dbpedia_id2)
-  #  json = safe_get_json sparql
-  #  if json['results']['bindings']
-  #    people = json[]
-  #end
+  def get_people_with_property(property, value)
+    sparql = build_people_with_property_sparql(property, value)
+    json = safe_get_json sparql
+    if json['results']['bindings']
+      people = json['results']['bindings']
+      simplify_json(people)
+    else
+      nil
+    end
+  end
 
   private
 
   def build_person_sparql dbpedia_id
-    "select ?name ?birthdate ?comment ?thumb where {<#{dbpedia_id}>
-    <http://www.w3.org/2000/01/rdf-schema#label> ?name ;
+    "select ?name ?birthdate ?description ?thumb where {
+    <#{dbpedia_id}> <http://www.w3.org/2000/01/rdf-schema#label> ?name ;
     <http://dbpedia.org/property/birthDate> ?birthdate ;
-    <http://www.w3.org/2000/01/rdf-schema#comment> ?comment
-    FILTER (lang(?comment)=\"en\")
+    <http://www.w3.org/2000/01/rdf-schema#comment> ?description
+    FILTER (lang(?description)=\"en\")
     FILTER (lang(?name)=\"en\") .
     OPTIONAL { <#{dbpedia_id}> <http://dbpedia.org/ontology/thumbnail> ?thumb .}} LIMIT 1"
+  end
+
+
+  def build_people_with_property_sparql property, value
+      "select ?name ?thumb where {
+    ?person <#{property}> <#{value}> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> ?name ;
+    FILTER (lang(?name)=\"en\") .
+    OPTIONAL { ?person <http://dbpedia.org/ontology/thumbnail> ?thumb .}} LIMIT 1"
   end
 
   def build_related_people_sparql dbpedia_id, count
