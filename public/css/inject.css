@@ -25,6 +25,10 @@
   margin: 30px auto;
 }
 
+.ldp-popover h5 {
+  margin-bottom: 4px;
+}
+
 .ldp-popover-container {
   position: absolute;
   z-index: 10000;
@@ -107,7 +111,6 @@
 
 .ldp-creative-works ul li a .cw-title {
   color: #1F4F82 !important;
-  font-size: 13px;
 }
 
 .ldp-relations {
@@ -120,6 +123,14 @@
   line-height: 10px;
   text-transform: uppercase;
   color: #666;
+}
+
+.ldp-relations ul {
+  margin-bottom: -3px;
+}
+
+.ldp-relations ul li {
+  margin-bottom: 3px;
 }
 
 .ldp-popover .separator {

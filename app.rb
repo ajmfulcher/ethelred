@@ -40,6 +40,8 @@ get '/news/*' do
   page.html.to_s
 end
 
+
+
 get '/api/tags' do
   query_params = {
     "webDocument" => CGI::escape(params[:url])
