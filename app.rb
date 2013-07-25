@@ -66,8 +66,14 @@ get '/partial/popup/detail' do
   query_params = {
     "tag" => uri
   }
-  @creative_works = settings.core_client.creative_works(query_params)
-  @person = settings.dbpedia_client.get_person(dbpedia_uri)
+  cw_thread = Thread.new {
+    @creative_works = settings.core_client.creative_works(query_params)
+  }
+  person_thread = Thread.new { 
+    @person = settings.dbpedia_client.get_person(dbpedia_uri)
+  }
+  cw_thread.join
+  person_thread.join
   haml :popup_detail
 end
 
